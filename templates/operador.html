@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECOruta - Operadores</title>
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+
+
+    <style>
+
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background-color: var(--blanco);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-top: 6px solid var(--morado-principal);
+        }
+
+
+        .container.editando {
+            border-top: 6px solid #e65100;
+        }
+
+
+        h2 {
+            color: var(--morado-principal);
+            margin-bottom: 20px;
+        }
+
+
+        .editando-titulo {
+            color: #e65100;
+        }
+
+
+        .form-control {
+            margin-bottom: 20px;
+        }
+
+
+        .form-control label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: var(--morado-oscuro);
+        }
+
+
+        .form-control input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--morado-claro);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+
+        .form-control input:focus {
+            outline: none;
+            border-color: var(--morado-principal);
+            box-shadow: 0 0 5px rgba(81,45,168,0.3);
+        }
+
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--morado-principal);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+
+        .btn:hover {
+            background-color: var(--morado-oscuro);
+        }
+
+
+        .btn-editar {
+            background-color: #e65100;
+        }
+
+
+        .btn-editar:hover {
+            background-color: #b33c00;
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: white;
+        }
+
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+
+        th {
+            background-color: var(--morado-medio);
+            color: white;
+        }
+
+
+        tr:hover {
+            background-color: #f3e5f5;
+        }
+
+
+        .btn-accion {
+            text-decoration: none;
+            padding: 7px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+
+        .editar {
+            background-color: #ede7f6;
+            color: var(--morado-principal);
+        }
+
+
+        .editar:hover {
+            background-color: #d1c4e9;
+        }
+
+
+        .eliminar {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+
+        .eliminar:hover {
+            background-color: #ffcdd2;
+        }
+
+
+        .acciones-container {
+            display: flex;
+            gap: 8px;
+        }
+
+
+        .volver-box {
+            margin-bottom: 25px;
+        }
+
+
+        .cancelar-box {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+
+        .link-cancelar {
+            color: #666;
+            text-decoration: underline;
+            font-size: 14px;
+        }
+
+
+    </style>
+
+
+</head>
+
+
+<body>
+
+
+    <section class="hero" style="padding: 30px 20px; border-radius: 0; text-align:center;">
+        <h1>ECOruta</h1>
+        <p>Gestión de Operadores</p>
+    </section>
+
+
+    <div class="container {% if operador_editando %}editando{% endif %}">
+
+
+        <div class="volver-box">
+            <a href="/index" class="btn-accion editar">
+                ← Volver al Inicio
+            </a>
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- SOLO ADMINISTRADOR PUEDE REGISTRAR / EDITAR -->
+        <!-- Porque claro, darle permisos absolutos a todos -->
+        <!-- siempre termina excelente en sistemas reales. -->
+        <!-- ===================================================== -->
+
+
+        {% if session.get('rol') == 'administrador' %}
+
+
+            {% if operador_editando %}
+                <h2 class="editando-titulo">
+                    Editar Operador
+                </h2>
+            {% else %}
+                <h2>
+                    Registrar Operador
+                </h2>
+            {% endif %}
+
+
+            <form action="/operador" method="POST">
+
+
+                {% if operador_editando %}
+                    <input
+                        type="hidden"
+                        name="id_operador"
+                        value="{{ operador_editando.id_operador }}"
+                    >
+                {% endif %}
+
+
+                <div class="form-control">
+
+
+                    <label for="nombre">
+                        Nombre Completo:
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        required
+                        minlength="3"
+                        maxlength="60"
+                        pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+                        title="Ingrese únicamente letras y espacios"
+                        placeholder="Ej. Juan Pérez"
+                        value="{% if operador_editando %}{{ operador_editando.nombre }}{% endif %}"
+                    >
+
+
+                </div>
+
+
+                <div class="form-control">
+
+
+                    <label for="telefono">
+                        Teléfono Celular:
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="telefono"
+                        name="telefono"
+                        required
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                        title="El número debe tener exactamente 10 dígitos"
+                        placeholder="Ej. 7221234567"
+                        value="{% if operador_editando %}{{ operador_editando.telefono }}{% endif %}"
+                    >
+
+
+                </div>
+
+
+                <div class="form-control">
+
+
+                    <label for="id_unidad">
+                        ID Unidad Asignada:
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="id_unidad"
+                        name="id_unidad"
+                        required
+                        min="1"
+                        placeholder="Ej. 1"
+                        value="{% if operador_editando %}{{ operador_editando.id_unidad }}{% endif %}"
+                    >
+
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn {% if operador_editando %}btn-editar{% endif %}"
+                >
+
+
+                    {% if operador_editando %}
+                        Actualizar Operador
+                    {% else %}
+                        Registrar Operador
+                    {% endif %}
+
+
+                </button>
+
+
+            </form>
+
+
+            {% if operador_editando %}
+                <div class="cancelar-box">
+                    <a href="/operador" class="link-cancelar">
+                        Cancelar edición
+                    </a>
+                </div>
+            {% endif %}
+
+
+        {% endif %}
+
+
+        <!-- ===================================================== -->
+        <!-- TABLA VISIBLE PARA ADMINISTRADOR Y SUPERVISOR -->
+        <!-- Porque supervisar sin ver datos sería una actividad -->
+        <!-- bastante filosófica. -->
+        <!-- ===================================================== -->
+
+
+        <h2>
+            Operadores Registrados
+        </h2>
+
+
+        <div style="overflow-x:auto;">
+
+
+            <table>
+
+
+                <thead>
+
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>ID Unidad</th>
+
+
+                        {% if session.get('rol') == 'administrador' %}
+                            <th>Acciones</th>
+                        {% endif %}
+                    </tr>
+
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for o in operadores %}
+
+
+                    <tr>
+
+
+                        <td>{{ o.id_operador }}</td>
+
+
+                        <td>{{ o.nombre }}</td>
+
+
+                        <td>{{ o.telefono }}</td>
+
+
+                        <td>{{ o.id_unidad }}</td>
+
+
+                        {% if session.get('rol') == 'administrador' %}
+
+
+                        <td>
+
+
+                            <div class="acciones-container">
+
+
+                                <a
+                                    class="btn-accion editar"
+                                    href="/operador?editar={{ o.id_operador }}"
+                                >
+                                    Editar
+                                </a>
+
+
+                                <a
+                                    class="btn-accion eliminar"
+                                    href="/eliminar_operador/{{ o.id_operador }}"
+                                    onclick="return confirm('¿Está seguro de eliminar este operador?')"
+                                >
+                                    Eliminar
+                                </a>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                        {% endif %}
+
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </div>
+
+
+</body>
+</html>

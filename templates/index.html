@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+
+    <title>ECOruta - Inicio</title>
+
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+
+<body>
+
+
+    <header class="encabezado">
+
+
+        <nav class="menu">
+
+
+            <h2>ECOruta</h2>
+
+
+            <ul>
+
+
+                <li>
+                    <a href="/index">Inicio</a>
+                </li>
+
+
+                <li>
+                    <a href="#presentacion">Presentación</a>
+                </li>
+
+
+                <li>
+                    <a href="#servicios">Servicios</a>
+                </li>
+
+
+                <!-- ================================================= -->
+                <!-- UNIDADES -->
+                <!-- administrador / supervisor / operador -->
+                <!-- ================================================= -->
+
+
+                {% if session.get('rol') in ['administrador', 'supervisor', 'operador'] %}
+
+
+                <li>
+                    <a href="/unidad">Unidades</a>
+                </li>
+
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- OPERADORES -->
+                <!-- administrador / supervisor -->
+                <!-- ================================================= -->
+
+
+                {% if session.get('rol') in ['administrador', 'supervisor'] %}
+
+
+                <li>
+                    <a href="/operador">Operadores</a>
+                </li>
+
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- HORARIOS -->
+                <!-- TODOS -->
+                <!-- ================================================= -->
+
+
+                {% if session.get('rol') in ['administrador', 'supervisor', 'operador', 'ciudadano'] %}
+
+
+                <li>
+                    <a href="/horario">Horarios</a>
+                </li>
+
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- RUTAS -->
+                <!-- TODOS -->
+                <!-- ================================================= -->
+
+
+                {% if session.get('rol') in ['administrador', 'supervisor', 'operador', 'ciudadano'] %}
+
+
+                <li>
+                    <a href="/ruta">Rutas</a>
+                </li>
+
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- CERRAR SESIÓN -->
+                <!-- Porque eventualmente hay que abandonar el caos -->
+                <!-- ================================================= -->
+
+
+                <li>
+                    <a href="/logout">Cerrar sesión</a>
+                </li>
+
+
+            </ul>
+
+
+        </nav>
+
+
+    </header>
+
+
+    <section class="hero">
+
+
+        <h1>
+            Bienvenido al Sistema ECOruta
+        </h1>
+
+
+        <p>
+
+
+            Un espacio digital diseñado para organizar,
+            consultar y administrar las unidades,
+            operadores, horarios y rutas de recolección
+            de residuos.
+
+
+        </p>
+
+
+        <!-- ============================================= -->
+        <!-- BOTÓN DINÁMICO SEGÚN ROL -->
+        <!-- ============================================= -->
+
+
+        {% if session.get('rol') in ['administrador', 'supervisor', 'operador'] %}
+
+
+            <a href="/unidad" class="boton-principal">
+                Entrar al Sistema
+            </a>
+
+
+        {% else %}
+
+
+            <a href="/ruta" class="boton-principal">
+                Consultar Rutas
+            </a>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+    <main>
+
+
+        <section id="presentacion" class="seccion">
+
+
+            <h2>
+                Presentación de ECOruta
+            </h2>
+
+
+            <p>
+
+
+                El sistema ECOruta permite coordinar
+                y administrar de forma eficiente las
+                rutas de recolección pública.
+
+
+            </p>
+
+
+            <p>
+
+
+                La plataforma facilita el control
+                operativo mediante módulos organizados
+                y conectados directamente a una base
+                de datos.
+
+
+            </p>
+
+
+        </section>
+
+
+        <section class="seccion fondo-claro">
+
+
+            <h2>
+                Objetivo del sistema
+            </h2>
+
+
+            <p>
+
+
+                Implementar una interfaz web intuitiva
+                para administrar rutas, unidades,
+                horarios y operadores de forma segura
+                y eficiente.
+
+
+            </p>
+
+
+        </section>
+
+
+        <section id="servicios" class="tarjetas-contenedor">
+
+
+            <h2>
+                Servicios de ECOruta
+            </h2>
+
+
+            <div class="tarjetas">
+
+
+                <!-- ================================ -->
+                <!-- UNIDADES -->
+                <!-- ================================ -->
+
+
+                {% if session.get('rol') in ['administrador', 'supervisor', 'operador'] %}
+
+
+                <div class="tarjeta-info">
+
+
+                    <h3>
+                        Gestión de Unidades
+                    </h3>
+
+
+                    <p>
+
+
+                        Registro y visualización de
+                        vehículos recolectores activos.
+
+
+                    </p>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+                <!-- ================================ -->
+                <!-- OPERADORES -->
+                <!-- ================================ -->
+
+
+                {% if session.get('rol') in ['administrador', 'supervisor'] %}
+
+
+                <div class="tarjeta-info">
+
+
+                    <h3>
+                        Gestión de Operadores
+                    </h3>
+
+
+                    <p>
+
+
+                        Administración del personal
+                        encargado de las rutas.
+
+
+                    </p>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+                <!-- ================================ -->
+                <!-- HORARIOS -->
+                <!-- ================================ -->
+
+
+                {% if session.get('rol') in ['administrador', 'supervisor', 'operador', 'ciudadano'] %}
+
+
+                <div class="tarjeta-info">
+
+
+                    <h3>
+                        Gestión de Horarios
+                    </h3>
+
+
+                    <p>
+
+
+                        Consulta y administración
+                        de horarios de recolección.
+
+
+                    </p>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+                <!-- ================================ -->
+                <!-- RUTAS -->
+                <!-- ================================ -->
+
+
+                {% if session.get('rol') in ['administrador', 'supervisor', 'operador', 'ciudadano'] %}
+
+
+                <div class="tarjeta-info">
+
+
+                    <h3>
+                        Gestión de Rutas
+                    </h3>
+
+
+                    <p>
+
+
+                        Consulta y control de sectores,
+                        colonias y rutas asignadas.
+
+
+                    </p>
+
+
+                </div>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+        </section>
+
+
+        <section class="seccion">
+
+
+            <h2>
+                Importancia del proyecto
+            </h2>
+
+
+            <p>
+
+
+                Este proyecto integra Flask,
+                bases de datos SQLite y control
+                de acceso por roles para crear
+                un sistema web funcional y seguro.
+
+
+            </p>
+
+
+        </section>
+
+
+    </main>
+
+
+    <footer>
+
+
+        <p>
+            ECOruta | Proyecto desarrollado con Flask y SQLite
+        </p>
+
+
+    </footer>
+
+
+</body>
+</html>
