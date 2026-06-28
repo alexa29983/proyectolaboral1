@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECOruta - Gestión de Operadores</title>
+    <style>
+        :root {
+            --morado-oscuro: #4b0082;
+            --morado-principal: #6a0dad;
+            --morado-hover: #35006b;
+            --blanco: #ffffff;
+            --gris-borde: #dcdcdc;
+            --rojo-eliminar: #d32f2f;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: var(--morado-principal);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 950px;
+            background: var(--blanco);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        h1 { text-align: center; color: var(--morado-oscuro); margin-bottom: 5px; }
+        .subtitulo { text-align: center; color: #555; margin-bottom: 25px; }
+        h2 { color: var(--morado-oscuro); margin-bottom: 20px; }
+        .form-control { margin-bottom: 20px; }
+        .form-control label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--morado-oscuro); }
+        .form-control input, .form-control select { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--gris-borde); box-sizing: border-box; font-size: 14px; }
+        .form-control input:focus, .form-control select:focus { outline: none; border-color: var(--morado-principal); box-shadow: 0 0 5px rgba(106, 13, 173, 0.3); }
+        .btn { width: 100%; padding: 12px; background: var(--morado-oscuro); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: var(--morado-hover); }
+        table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background: var(--morado-oscuro); color: white; }
+        tr:hover { background-color: #f5ecff; }
+        .btn-accion { text-decoration: none; padding: 7px 12px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-right: 5px; transition: 0.3s; }
+        .editar { background-color: #ede7f6; color: var(--morado-oscuro); }
+        .editar:hover { background-color: #d1c4e9; }
+        .eliminar { background-color: #ffebee; color: var(--rojo-eliminar); }
+        .eliminar:hover { background-color: #ffcdd2; }
+        .volver { margin-top: 25px; text-align: center; }
+        .btn-volver { display: inline-block; text-decoration: none; background: var(--morado-oscuro); color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; transition: 0.3s; }
+        .btn-volver:hover { background: var(--morado-hover); }
+    </style>
+</head>
+<body>
+
+{% set rol = session.get('rol', '').strip().lower() %}
+
+<div class="container">
+    <h1>ECOruta</h1>
+    <p class="subtitulo">Gestión de operadores (Conductores)</p>
+
+    {% if rol != 'ciudadano' %}
+        {% if operador_editando %}
+            <h2>Editando Operador: {{ operador_editando.nombre }}</h2>
+        {% else %}
+            <h2>Registrar Nuevo Operador</h2>
+        {% endif %}
+
+        <form action="/operador" method="POST">
+            {% if operador_editando %}
+                <input type="hidden" name="id_operador" value="{{ operador_editando.id_operador }}">
+            {% endif %}
+
+            <div class="form-control">
+                <label>Nombre Completo:</label>
+                <input type="text" name="nombre" placeholder="Ej: Juan Pérez" required value="{% if operador_editando %}{{ operador_editando.nombre }}{% endif %}">
+            </div>
+
+            <div class="form-control">
+                <label>Teléfono:</label>
+                <input type="text" name="telefono" placeholder="Ej: 5512345678" required value="{% if operador_editando %}{{ operador_editando.telefono }}{% endif %}">
+            </div>
+
+            <div class="form-control">
+                <label>Asignar Unidad (Camión):</label>
+                <select name="id_unidad">
+                    <option value="">-- Sin unidad asignada --</option>
+                    {% for unidad in unidades_disponibles %}
+                        <option value="{{ unidad.id_unidad }}" {% if operador_editando and operador_editando.id_unidad == unidad.id_unidad %}selected{% endif %}>
+                            Placa: {{ unidad.placa }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-control">
+                <label>Estado del Operador:</label>
+                <select name="estado" required>
+                    <option value="Activo" {% if operador_editando and operador_editando.estado == 'Activo' %}selected{% endif %}>Activo</option>
+                    <option value="Inactivo" {% if operador_editando and operador_editando.estado == 'Inactivo' %}selected{% endif %}>Inactivo</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">
+                {% if operador_editando %} Actualizar Operador {% else %} Registrar Operador {% endif %}
+            </button>
+        </form>
+    {% endif %}
+
+    <h2>Operadores Registrados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Unidad Asignada</th>
+                <th>Estado</th>
+                {% if rol != 'ciudadano' %}
+                    <th>Acciones</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in operadores %}
+            <tr>
+                <td>{{ o.id_operador }}</td>
+                <td>{{ o.nombre }}</td>
+                <td>{{ o.telefono }}</td>
+                <td>
+                    {% if o.placa %}
+                        <span style="background: #ede7f6; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: var(--morado-oscuro);">
+                            {{ o.placa }}
+                        </span>
+                    {% else %}
+                        <i style="color: #888;">Ninguna</i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if o.estado == 'Activo' %}
+                        <span style="color: green; font-weight: bold;">Activo</span>
+                    {% else %}
+                        <span style="color: red; font-weight: bold;">Inactivo</span>
+                    {% endif %}
+                </td>
+                
+                {% if rol != 'ciudadano' %}
+                <td>
+                    <a class="btn-accion editar" href="/operador?editar={{ o.id_operador }}">Editar</a>
+                    <a class="btn-accion eliminar" href="/eliminar_operador/{{ o.id_operador }}" onclick="return confirm('¿Eliminar este operador?')">Eliminar</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="volver">
+        <a href="/index" class="btn-volver">← Regresar al Inicio</a>
+    </div>
+</div>
+</body>
+</html>

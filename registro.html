@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECOruta - Registro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--fondo-gris);
+        }
+        .registro-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--blanco);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-top: 6px solid var(--morado-principal);
+            box-sizing: border-box;
+        }
+        .registro-container h1 { text-align: center; color: var(--morado-oscuro); margin-bottom: 5px; }
+        .registro-container p { text-align: center; color: #666; margin-bottom: 25px; }
+        .form-control { margin-bottom: 20px; }
+        .form-control label { display: block; margin-bottom: 6px; font-weight: bold; color: var(--morado-oscuro); }
+        .form-control input, .form-control select {
+            width: 100%; padding: 12px; border: 1px solid var(--morado-claro); border-radius: 6px; box-sizing: border-box; font-size: 14px;
+        }
+        .form-control input:focus, .form-control select:focus {
+            outline: none; border-color: var(--morado-principal); box-shadow: 0 0 5px rgba(81, 45, 168, 0.3);
+        }
+        .btn {
+            width: 100%; padding: 12px; border: none; border-radius: 6px; background-color: var(--morado-principal); color: white; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn:hover { background-color: var(--morado-oscuro); }
+        .volver { margin-top: 20px; text-align: center; font-size: 14px; }
+        .volver a { color: var(--morado-principal); text-decoration: none; font-weight: bold; }
+        .volver a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+
+    <div class="registro-container">
+        <h1>ECOruta</h1>
+        <p>Registro de usuario</p>
+
+
+        <form action="/registro" method="POST">
+            <div class="form-control">
+                <label for="nombre">Nombre Completo:</label>
+                <input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    required
+                    minlength="3"
+                    maxlength="50"
+                    pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+                    title="El nombre solo debe contener letras y espacios"
+                    placeholder="Ej. Juan Pérez"
+                >
+            </div>
+
+
+            <div class="form-control">
+                <label for="contrasena">Contraseña:</label>
+                <input
+                    type="password"
+                    id="contrasena"
+                    name="contrasena"
+                    required
+                    minlength="8"
+                    placeholder="Mínimo 8 caracteres"
+                >
+            </div>
+
+
+            <div class="form-control">
+                <label for="rol">Rol del Usuario:</label>
+                <select id="rol" name="rol" required>
+                    <option value="" disabled selected>Seleccione un rol</option>
+                    <option value="ciudadano">Ciudadano</option>
+                    <option value="operador">Operador</option>
+                </select>
+            </div>
+
+
+            <button type="submit" class="btn">Registrarse</button>
+        </form>
+
+
+        <div class="volver">
+            <p>¿Ya tienes cuenta? <a href="/">Inicia sesión</a></p>
+        </div>
+    </div>
+
+
+</body>
+</html>

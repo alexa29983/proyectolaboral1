@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ECOruta - Gestión de Unidades</title>
+
+    <style>
+
+        :root {
+
+            --morado-oscuro: #4b0082;
+            --morado-principal: #6a0dad;
+            --morado-hover: #35006b;
+
+            --blanco: #ffffff;
+
+            --gris-borde: #dcdcdc;
+
+            --rojo-eliminar: #d32f2f;
+
+        }
+
+        body {
+
+            font-family: 'Segoe UI', Arial, sans-serif;
+
+            margin: 0;
+
+            background: var(--morado-principal);
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            min-height: 100vh;
+
+            padding: 30px;
+
+            box-sizing: border-box;
+
+        }
+
+        .container {
+
+            width: 100%;
+
+            max-width: 950px;
+
+            background: var(--blanco);
+
+            padding: 30px;
+
+            border-radius: 15px;
+
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+
+        }
+
+        h1 {
+
+            text-align: center;
+
+            color: var(--morado-oscuro);
+
+            margin-bottom: 5px;
+
+        }
+
+        .subtitulo {
+
+            text-align: center;
+
+            color: #555;
+
+            margin-bottom: 25px;
+
+        }
+
+        h2 {
+
+            color: var(--morado-oscuro);
+
+            margin-bottom: 20px;
+
+        }
+
+        .form-control {
+
+            margin-bottom: 20px;
+
+        }
+
+        .form-control label {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+            font-weight: bold;
+
+            color: var(--morado-oscuro);
+
+        }
+
+        .form-control input, .form-control select {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border-radius: 6px;
+
+            border: 1px solid var(--gris-borde);
+
+            box-sizing: border-box;
+
+            font-size: 14px;
+
+        }
+
+        .form-control input:focus, .form-control select:focus {
+
+            outline: none;
+
+            border-color: var(--morado-principal);
+
+            box-shadow: 0 0 5px rgba(106, 13, 173, 0.3);
+
+        }
+
+        .btn {
+
+            width: 100%;
+
+            padding: 12px;
+
+            background: var(--morado-oscuro);
+
+            color: white;
+
+            border: none;
+
+            border-radius: 6px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+        }
+
+        .btn:hover {
+
+            background: var(--morado-hover);
+
+        }
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-top: 30px;
+
+        }
+
+        th, td {
+
+            padding: 12px;
+
+            border-bottom: 1px solid #ddd;
+
+            text-align: left;
+
+        }
+
+        th {
+
+            background: var(--morado-oscuro);
+
+            color: white;
+
+        }
+
+        tr:hover {
+
+            background-color: #f5ecff;
+
+        }
+
+        .btn-accion {
+
+            text-decoration: none;
+
+            padding: 7px 12px;
+
+            border-radius: 6px;
+
+            font-size: 13px;
+            
+            font-weight: bold;
+
+            margin-right: 5px;
+
+            transition: 0.3s;
+
+        }
+
+        .editar {
+
+            background-color: #ede7f6;
+
+            color: var(--morado-oscuro);
+
+        }
+
+        .editar:hover {
+
+            background-color: #d1c4e9;
+
+        }
+
+        .eliminar {
+
+            background-color: #ffebee;
+
+            color: var(--rojo-eliminar);
+
+        }
+
+        .eliminar:hover {
+
+            background-color: #ffcdd2;
+
+        }
+
+        .volver {
+
+            margin-top: 25px;
+
+            text-align: center;
+
+        }
+
+        .btn-volver {
+
+            display: inline-block;
+
+            text-decoration: none;
+
+            background: var(--morado-oscuro);
+
+            color: white;
+
+            padding: 12px 20px;
+
+            border-radius: 6px;
+
+            font-weight: bold;
+
+            transition: 0.3s;
+
+        }
+
+        .btn-volver:hover {
+
+            background: var(--morado-hover);
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+{% set rol = session.get('rol', '').strip().lower() %}
+
+<div class="container">
+
+    <h1>ECOruta</h1>
+
+    <p class="subtitulo">
+        Gestión de unidades
+    </p>
+
+    {% if rol != 'ciudadano' %}
+
+        {% if unidad_editando %}
+
+            <h2>
+                Editando Unidad {{ unidad_editando.id_unidad }}
+            </h2>
+
+        {% else %}
+
+            <h2>
+                Registrar Nueva Unidad
+            </h2>
+
+        {% endif %}
+
+        <form action="/unidad" method="POST">
+
+            {% if unidad_editando %}
+
+                <input
+                    type="hidden"
+                    name="id_unidad"
+                    value="{{ unidad_editando.id_unidad }}"
+                >
+
+            {% endif %}
+
+            <div class="form-control">
+                <label>Placa:</label>
+                <input
+                    type="text"
+                    name="placa"
+                    placeholder="Ej: ABC-123"
+                    required
+                    value="{% if unidad_editando %}{{ unidad_editando.placa }}{% endif %}"
+                >
+            </div>
+
+            <div class="form-control">
+                <label>Tipo de Camión:</label>
+                <input
+                    type="text"
+                    name="tipo_camion"
+                    placeholder="Ej: Compactador, Carga Lateral"
+                    required
+                    value="{% if unidad_editando %}{{ unidad_editando.tipo_camion }}{% endif %}"
+                >
+            </div>
+
+            <div class="form-control">
+                <label>Estado Operacional:</label>
+                <select name="estado_operacional" required>
+                    <option value="Libre" {% if unidad_editando and unidad_editando.estado_operacional == 'Libre' %}selected{% endif %}>Libre</option>
+                    <option value="Ocupado" {% if unidad_editando and unidad_editando.estado_operacional == 'Ocupado' %}selected{% endif %}>Ocupado</option>
+                    <option value="Descompuesto" {% if unidad_editando and unidad_editando.estado_operacional == 'Descompuesto' %}selected{% endif %}>Descompuesto</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">
+
+                {% if unidad_editando %}
+
+                    Actualizar Unidad
+
+                {% else %}
+
+                    Registrar Unidad
+
+                {% endif %}
+
+            </button>
+
+        </form>
+
+    {% endif %}
+
+    <h2>
+        Unidades Registradas
+    </h2>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>ID</th>
+
+                <th>Placa</th>
+
+                <th>Tipo de Camión</th>
+
+                <th>Estado</th>
+
+                {% if rol != 'ciudadano' %}
+
+                    <th>Acciones</th>
+
+                {% endif %}
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for u in unidades %}
+
+            <tr>
+
+                <td>
+                    {{ u.id_unidad }}
+                </td>
+
+                <td>
+                    {{ u.placa }}
+                </td>
+
+                <td>
+                    {{ u.tipo_camion }}
+                </td>
+
+                <td>
+                    {% if u.estado_operacional == 'Libre' %}
+                        <span style="color: green; font-weight: bold;">Libre</span>
+                    {% elif u.estado_operacional == 'Ocupado' %}
+                        <span style="color: orange; font-weight: bold;">Ocupado</span>
+                    {% else %}
+                        <span style="color: red; font-weight: bold;">Descompuesto</span>
+                    {% endif %}
+                </td>
+
+                {% if rol != 'ciudadano' %}
+
+                <td>
+
+                    <a
+                        class="btn-accion editar"
+                        href="/unidad?editar={{ u.id_unidad }}"
+                    >
+                        Editar
+                    </a>
+
+                    <a
+                        class="btn-accion eliminar"
+                        href="/eliminar_unidad/{{ u.id_unidad }}"
+                        onclick="return confirm('¿Eliminar unidad?')"
+                    >
+                        Eliminar
+                    </a>
+
+                </td>
+
+                {% endif %}
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="volver">
+
+        <a href="/index" class="btn-volver">
+
+            ← Regresar al Inicio
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

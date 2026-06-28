@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECOruta - Inicio de Sesión</title>
+
+
+    <style>
+
+
+        :root {
+            --morado-oscuro: #310a5d;
+            --morado-principal: #512da8;
+            --morado-medio: #7c4dff;
+            --morado-claro: #b39ddb;
+            --fondo: #f3f0f7;
+            --blanco: #ffffff;
+            --rojo: #d32f2f;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--fondo);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+
+        .login-container {
+            width: 400px;
+            background-color: var(--blanco);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+
+        h1 {
+            text-align: center;
+            color: var(--morado-oscuro);
+            margin-bottom: 5px;
+        }
+
+
+        p {
+            text-align: center;
+            color: #555;
+        }
+
+
+        .form-control {
+            margin-bottom: 20px;
+        }
+
+
+        .form-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+
+        .form-control input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--morado-claro);
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+
+        .form-control input:focus {
+            outline: none;
+            border-color: var(--morado-principal);
+            box-shadow: 0 0 5px rgba(81, 45, 168, 0.3);
+        }
+
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--morado-principal);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+
+        .btn:hover {
+            background-color: var(--morado-oscuro);
+        }
+
+
+        .registro {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+
+        .registro a {
+            color: var(--morado-principal);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+
+        .registro a:hover {
+            text-decoration: underline;
+        }
+
+
+        .mensaje-error {
+            background-color: #ffebee;
+            color: var(--rojo);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            border: 1px solid #ffcdd2;
+        }
+
+
+    </style>
+
+
+</head>
+
+
+<body>
+
+
+    <div class="login-container">
+
+
+        <h1>ECOruta</h1>
+
+
+        <p>Inicio de sesión</p>
+
+
+        <!-- MENSAJES FLASH -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+
+
+                    <div class="mensaje-error">
+                        {{ message }}
+                    </div>
+
+
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+
+        <form action="/usuario" method="POST">
+
+
+            <div class="form-control">
+
+
+                <label>Nombre:</label>
+
+
+                <input
+                    type="text"
+                    name="nombre"
+                    required
+                    autocomplete="off"
+                >
+
+
+            </div>
+
+
+            <div class="form-control">
+
+
+                <label>Contraseña:</label>
+
+
+                <input
+                    type="password"
+                    name="contrasena"
+                    required
+                >
+
+
+            </div>
+
+
+            <button type="submit" class="btn">
+                Ingresar
+            </button>
+
+
+        </form>
+
+
+        <div class="registro">
+
+
+            <p>
+                ¿Aún no tienes cuenta?
+                <a href="/registro">
+                    Regístrate
+                </a>
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+
+</body>
+</html>
